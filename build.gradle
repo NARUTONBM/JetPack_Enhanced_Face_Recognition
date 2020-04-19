@@ -1,0 +1,61 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+
+        google()
+        jcenter()
+
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+
+        google()
+        jcenter()
+
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext {
+    sdkVersion = 29
+    miniSdkVersion = 23
+    buildToolsVersion = "29.0.2"
+
+    junitVersion = "4.12"
+    junitTestVersion = "1.1.1"
+    espressoVersion = "3.2.0"
+
+    appcompatVersion = "1.1.0"
+    constraintlayoutVersion = "2.0.0-beta4"
+    rvVersion = "1.1.0"
+    lifecycleVersion = "2.2.0"
+    navigationVersion = "2.2.2"
+
+    utilcodexVersion = "1.28.1"
+    glideVersion = "4.11.0"
+    slidinguppanelVersion = "3.4.0"
+    materialVersion = "1.2.0-alpha06"
+    permissionVersion = "2.0.1"
+}

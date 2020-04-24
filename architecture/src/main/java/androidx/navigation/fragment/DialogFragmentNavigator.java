@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.kunminx.architecture.R;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,8 +39,6 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 import androidx.navigation.NavigatorProvider;
-
-import com.kunminx.architecture.R;
 
 
 /**

@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kunminx.architecture.R;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.NavigationRes;
 import androidx.annotation.NonNull;
@@ -36,8 +38,6 @@ import androidx.navigation.NavHost;
 import androidx.navigation.NavHostController;
 import androidx.navigation.Navigation;
 import androidx.navigation.Navigator;
-
-import com.kunminx.architecture.R;
 
 /**
  * NavHostFragment provides an area within your layout for self-contained navigation to occur.

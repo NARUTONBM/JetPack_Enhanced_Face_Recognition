@@ -23,6 +23,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.kunminx.architecture.R;
+
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -36,13 +43,6 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 import androidx.navigation.NavigatorProvider;
-
-import com.kunminx.architecture.R;
-
-import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Navigator that navigates through {@link FragmentTransaction fragment transactions}. Every

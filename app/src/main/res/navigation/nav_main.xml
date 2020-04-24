@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main.xml"
+    app:startDestination="@id/homeFragment">
+
+    <fragment_recognize
+        android:id="@+id/recognizeFragment"
+        android:name="com.randolltest.facerecognition.ui.recognize.RecognizeFragment"
+        android:label="RecognizeFragment"
+        tools:layout="@layout/fragment_recognize">
+
+        <action
+            android:id="@+id/action_recognizeFragment_to_manageFragment"
+            app:destination="@id/manageFragment" />
+
+    </fragment_recognize>
+
+    <fragment_recognize
+        android:id="@+id/manageFragment"
+        android:name="com.randolltest.facerecognition.ui.manage.ManageFragment"
+        android:label="ManageFragment"
+        tools:layout="@layout/fragment_manage">
+
+        <action
+            android:id="@+id/action_manageFragment_to_recognizeFragment"
+            app:destination="@id/recognizeFragment"
+            app:popUpTo="@id/recognizeFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment_recognize>
+
+    <fragment_recognize
+        android:id="@+id/homeFragment"
+        android:name="com.randolltest.facerecognition.ui.home.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_recognizeFragment"
+            app:destination="@id/recognizeFragment" />
+
+    </fragment_recognize>
+
+</navigation>

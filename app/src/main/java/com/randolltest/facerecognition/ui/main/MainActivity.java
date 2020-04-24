@@ -1,8 +1,10 @@
-package com.randolltest.facerecognition;
+package com.randolltest.facerecognition.ui.main;
+
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
+import com.randolltest.facerecognition.R;
 
 public class MainActivity extends AppCompatActivity {
 

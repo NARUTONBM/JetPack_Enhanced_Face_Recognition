@@ -49,4 +49,5 @@ public class SharedViewModel extends ViewModel {
     public static final ObservableBoolean IS_DRAWER_OPENED = new ObservableBoolean();
     public final UnPeekLiveData<Boolean> activityCanBeClosedDirectly = new UnPeekLiveData<>();
     public final UnPeekLiveData<Boolean> isSdiActivated = new UnPeekLiveData<>();
+    public final UnPeekLiveData<Boolean> mInitResult = new UnPeekLiveData<>();
 }

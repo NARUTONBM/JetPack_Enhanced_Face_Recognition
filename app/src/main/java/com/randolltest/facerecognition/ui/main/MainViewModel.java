@@ -1,5 +1,7 @@
 package com.randolltest.facerecognition.ui.main;
 
+import com.randolltest.facerecognition.face.FaceManager;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -21,15 +23,22 @@ public class MainViewModel extends ViewModel {
     // 记得在视图控制器中要加入 mBinding.setLifecycleOwner(this);
     //详见 https://xiaozhuanlan.com/topic/9816742350
 
-    public final MutableLiveData<Boolean> openDrawer = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mInitResult = new MutableLiveData<>();
 
-    public final MutableLiveData<Boolean> allowDrawerOpen = new MutableLiveData<>();
+    private MutableLiveData<Boolean> getInitResult() {
+        if (mInitResult == null) {
+            mInitResult = new MutableLiveData<>();
+            mInitResult.setValue(false);
+        }
 
-    public final MutableLiveData<Boolean> listenDrawerState = new MutableLiveData<>();
+        return mInitResult;
+    }
 
-    {
-        listenDrawerState.setValue(true);
-        allowDrawerOpen.setValue(true);
-        openDrawer.setValue(false);
+    FaceManager getFaceManager() {
+        return FaceManager.getInstance();
+    }
+
+    void initEngine() {
+        getFaceManager().init(getInitResult());
     }
 }

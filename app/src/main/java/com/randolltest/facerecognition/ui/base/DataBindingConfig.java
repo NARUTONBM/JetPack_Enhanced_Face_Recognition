@@ -21,7 +21,7 @@ public class DataBindingConfig {
 
     private ViewModel stateViewModel;
 
-    private SparseArray bindingParams = new SparseArray();
+    private SparseArray<Object> bindingParams = new SparseArray<>();
 
     public DataBindingConfig(int layout, ViewModel stateViewModel) {
         this.layout = layout;
@@ -36,7 +36,7 @@ public class DataBindingConfig {
         return stateViewModel;
     }
 
-    public SparseArray getBindingParams() {
+    public SparseArray<Object> getBindingParams() {
         return bindingParams;
     }
 

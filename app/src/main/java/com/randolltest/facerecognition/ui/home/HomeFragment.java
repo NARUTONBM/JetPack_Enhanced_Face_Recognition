@@ -1,13 +1,21 @@
 package com.randolltest.facerecognition.ui.home;
 
 import android.Manifest;
+import android.os.Bundle;
+import android.view.View;
 
+import com.arcsoft.face.ErrorInfo;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.ftd.livepermissions.LivePermissions;
 import com.ftd.livepermissions.PermissionResult;
 import com.randolltest.facerecognition.R;
+import com.randolltest.facerecognition.data.Constants;
 import com.randolltest.facerecognition.ui.base.BaseFragment;
 import com.randolltest.facerecognition.ui.base.DataBindingConfig;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class HomeFragment extends BaseFragment {
 
@@ -20,14 +28,38 @@ public class HomeFragment extends BaseFragment {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
     };
+    private HomeViewModel mHomeViewModel;
 
     @Override
     protected void initViewModel() {
+        mHomeViewModel = getFragmentViewModel(HomeViewModel.class);
     }
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
         return new DataBindingConfig(R.layout.fragment_home, null);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        getLifecycle().addObserver(mHomeViewModel.getActiveUseCase());
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mHomeViewModel.getActiveCodeLiveData().observe(getViewLifecycleOwner(), activeCode -> {
+            if (activeCode == ErrorInfo.MOK || activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                SPUtils.getInstance().put(Constants.SP.KEY_ACTIVE_STATE, true);
+                getSharedViewModel().isSdiActivated.setValue(true);
+                nav().navigate(R.id.action_homeFragment_to_recognizeFragment);
+            } else {
+                ToastUtils.showShort(getString(R.string.active_failed, activeCode));
+            }
+        });
     }
 
     @Override
@@ -38,7 +70,12 @@ public class HomeFragment extends BaseFragment {
                 .observe(this, permissionResult -> {
                     if (permissionResult instanceof PermissionResult.Grant) {
                         // 权限允许
-                        nav().navigate(R.id.action_homeFragment_to_recognizeFragment);
+                        if (SPUtils.getInstance().getBoolean(Constants.SP.KEY_ACTIVE_STATE, false)) {
+                            getSharedViewModel().isSdiActivated.setValue(true);
+                            nav().navigate(R.id.action_homeFragment_to_recognizeFragment);
+                        } else {
+                            mHomeViewModel.activeEngine();
+                        }
                     } else if (permissionResult instanceof PermissionResult.Rationale) {
                         // 权限拒绝
                         StringBuilder stringBuilder = new StringBuilder();

@@ -16,13 +16,13 @@
 
 package com.randolltest.facerecognition.ui.base;
 
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.ViewModel;
+
 import com.kunminx.architecture.bridge.callback.UnPeekLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.databinding.ObservableBoolean;
-import androidx.lifecycle.ViewModel;
 
 /**
  * TODO tip：callback - ViewModel 的职责仅限于 页面通信，不建议在此处理 UI 逻辑，
@@ -48,5 +48,5 @@ public class SharedViewModel extends ViewModel {
     public static final List<String> TAG_OF_SECONDARY_PAGES = new ArrayList<>();
     public static final ObservableBoolean IS_DRAWER_OPENED = new ObservableBoolean();
     public final UnPeekLiveData<Boolean> activityCanBeClosedDirectly = new UnPeekLiveData<>();
-    public final UnPeekLiveData<Boolean> isCameraPermitted = new UnPeekLiveData<>();
+    public final UnPeekLiveData<Boolean> isSdiActivated = new UnPeekLiveData<>();
 }

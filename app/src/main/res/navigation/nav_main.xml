@@ -5,7 +5,7 @@
     android:id="@+id/nav_main.xml"
     app:startDestination="@id/homeFragment">
 
-    <fragment_recognize
+    <fragment
         android:id="@+id/recognizeFragment"
         android:name="com.randolltest.facerecognition.ui.recognize.RecognizeFragment"
         android:label="RecognizeFragment"
@@ -15,9 +15,9 @@
             android:id="@+id/action_recognizeFragment_to_manageFragment"
             app:destination="@id/manageFragment" />
 
-    </fragment_recognize>
+    </fragment>
 
-    <fragment_recognize
+    <fragment
         android:id="@+id/manageFragment"
         android:name="com.randolltest.facerecognition.ui.manage.ManageFragment"
         android:label="ManageFragment"
@@ -29,9 +29,9 @@
             app:popUpTo="@id/recognizeFragment"
             app:popUpToInclusive="true" />
 
-    </fragment_recognize>
+    </fragment>
 
-    <fragment_recognize
+    <fragment
         android:id="@+id/homeFragment"
         android:name="com.randolltest.facerecognition.ui.home.HomeFragment"
         android:label="HomeFragment"
@@ -41,6 +41,6 @@
             android:id="@+id/action_homeFragment_to_recognizeFragment"
             app:destination="@id/recognizeFragment" />
 
-    </fragment_recognize>
+    </fragment>
 
 </navigation>

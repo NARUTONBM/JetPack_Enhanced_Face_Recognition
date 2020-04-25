@@ -2,4 +2,5 @@
     <string name="app_name">FaceRecognition</string>
     <string name="value_screen_title">JetPack_Enhanced_Face_Recognition</string>
     <string name="value_manage_title">设置</string>
+    <string name="active_failed">引擎激活失败，错误码为 %d</string>
 </resources>

@@ -1,8 +1,5 @@
 package com.randolltest.facerecognition.ui.main;
 
-import com.randolltest.facerecognition.face.FaceManager;
-
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 /**
@@ -18,27 +15,4 @@ import androidx.lifecycle.ViewModel;
  * Create by KunMinX at 19/10/29
  */
 public class MainViewModel extends ViewModel {
-
-    //TODO 演示 LiveData 来用作 DataBinding 数据绑定的情况。
-    // 记得在视图控制器中要加入 mBinding.setLifecycleOwner(this);
-    //详见 https://xiaozhuanlan.com/topic/9816742350
-
-    private MutableLiveData<Boolean> mInitResult = new MutableLiveData<>();
-
-    private MutableLiveData<Boolean> getInitResult() {
-        if (mInitResult == null) {
-            mInitResult = new MutableLiveData<>();
-            mInitResult.setValue(false);
-        }
-
-        return mInitResult;
-    }
-
-    FaceManager getFaceManager() {
-        return FaceManager.getInstance();
-    }
-
-    void initEngine() {
-        getFaceManager().init(getInitResult());
-    }
 }

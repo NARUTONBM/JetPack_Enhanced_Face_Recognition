@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.blankj.utilcode.util.Utils;
+import com.randolltest.facerecognition.face.FeatureMap;
 
 /**
  * @author narut.
@@ -26,6 +27,7 @@ public class App extends Application implements ViewModelStoreOwner {
         super.onCreate();
 
         mViewModelStore = new ViewModelStore();
+        FeatureMap.init();
         Utils.init(this);
     }
 

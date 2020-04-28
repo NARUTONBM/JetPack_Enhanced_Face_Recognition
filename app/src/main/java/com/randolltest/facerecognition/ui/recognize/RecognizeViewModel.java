@@ -1,19 +1,22 @@
 package com.randolltest.facerecognition.ui.recognize;
 
+import android.app.Application;
 import android.hardware.Camera;
 import android.view.View;
 
 import com.kunminx.architecture.bridge.callback.UnPeekLiveData;
+import com.randolltest.facerecognition.R;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.ObservableField;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.AndroidViewModel;
 
 /**
  * @author randoll.
  * @Date 4/21/20.
  * @Time 00:29.
  */
-public class RecognizeViewModel extends ViewModel {
+public class RecognizeViewModel extends AndroidViewModel {
 
     /**
      * 根据识别状态动态展示/隐藏比对结果控件
@@ -28,7 +31,12 @@ public class RecognizeViewModel extends ViewModel {
      */
     public final UnPeekLiveData<Camera> cameraState = new UnPeekLiveData<>();
 
-    {
+    public final ObservableField<String> titleContent = new ObservableField<>();
+
+    public RecognizeViewModel(@NonNull Application application) {
+        super(application);
+
+        titleContent.set(application.getString(R.string.value_screen_title));
         recognizeState.set(View.INVISIBLE);
         titleState.set(View.VISIBLE);
     }

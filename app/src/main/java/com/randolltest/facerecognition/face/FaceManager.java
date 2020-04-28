@@ -254,6 +254,10 @@ public class FaceManager implements DefaultLifecycleObserver {
 
     public void searchFace(FaceFeature faceFeature, int trackId, FaceRepository faceRepository, MutableLiveData<CompareResult> liveData) {
         if (sFaceEngine == null || isProcessing || faceFeature == null || mFeatureMap == null || mFeatureMap.getMap().size() == 0) {
+            LogUtils.w("底库为空！");
+            CompareResult compareResult = new CompareResult();
+            compareResult.setErrorMsg("先试试人脸注册吧～");
+            liveData.setValue(compareResult);
             return;
         }
         FaceFeature tempFaceFeature = new FaceFeature();

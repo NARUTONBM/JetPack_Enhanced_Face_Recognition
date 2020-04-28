@@ -12,7 +12,7 @@ import com.arcsoft.face.FaceFeature;
 public class FaceRecognizeResult {
 
     private int mResultCode;
-    private int mTrackId;
+    private Integer mTrackId;
     private FaceFeature mFaceFeature;
 
     public int getResultCode() {
@@ -23,11 +23,11 @@ public class FaceRecognizeResult {
         mResultCode = resultCode;
     }
 
-    public int getTrackId() {
+    public Integer getTrackId() {
         return mTrackId;
     }
 
-    public void setTrackId(int trackId) {
+    public void setTrackId(Integer trackId) {
         mTrackId = trackId;
     }
 

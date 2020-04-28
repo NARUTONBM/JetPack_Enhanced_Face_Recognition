@@ -154,13 +154,13 @@ public class FaceHelper {
      * @return 实时人脸处理结果，封装添加了一个trackId，trackId的获取依赖于faceId，用于记录人脸序号并保存
      */
     public List<FacePreviewInfo> onPreviewFrame(byte[] nv21, MutableLiveData<FaceRecognizeResult> liveData) {
+        FaceRecognizeResult result = new FaceRecognizeResult();
         if (ftEngine != null) {
             faceInfoList.clear();
             long ftStartTime = System.currentTimeMillis();
             int code = ftEngine.detectFaces(nv21, SharedViewModel.sPreviewWith.get(), SharedViewModel.sPreviewHeight.get(),
                     FaceEngine.CP_PAF_NV21, faceInfoList);
             if (code != ErrorInfo.MOK) {
-                FaceRecognizeResult result = new FaceRecognizeResult();
                 result.setResultCode(code);
                 liveData.setValue(result);
             }
@@ -171,6 +171,11 @@ public class FaceHelper {
         facePreviewInfoList.clear();
         for (int i = 0; i < faceInfoList.size(); i++) {
             facePreviewInfoList.add(new FacePreviewInfo(faceInfoList.get(i), currentTrackIdList.get(i)));
+        }
+
+        if (facePreviewInfoList.size() == 0) {
+            result.setResultCode(-1);
+            liveData.setValue(result);
         }
 
         return facePreviewInfoList;

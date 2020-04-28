@@ -1,9 +1,11 @@
 package com.randolltest.facerecognition.data;
 
 public class CompareResult {
+
     private String userName;
     private float similar;
     private int trackId;
+    private String mErrorMsg;
 
     public CompareResult() {
     }
@@ -35,5 +37,13 @@ public class CompareResult {
 
     public void setTrackId(int trackId) {
         this.trackId = trackId;
+    }
+
+    public String getErrorMsg() {
+        return mErrorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        mErrorMsg = errorMsg;
     }
 }

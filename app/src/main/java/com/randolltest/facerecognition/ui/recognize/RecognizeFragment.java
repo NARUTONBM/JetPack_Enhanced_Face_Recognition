@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.blankj.utilcode.util.TimeUtils;
 import com.ftd.livepermissions.LivePermissions;
 import com.ftd.livepermissions.PermissionResult;
 import com.randolltest.facerecognition.BR;
@@ -29,6 +30,7 @@ public class RecognizeFragment extends BaseFragment {
 
     private RecognizeViewModel mRecognizeViewModel;
     private FaceViewModel mFaceViewModel;
+    private static long sLastNoFaceMills;
 
     @Override
     protected void initViewModel() {
@@ -46,24 +48,44 @@ public class RecognizeFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         LivePermissions livePermissions = new LivePermissions(this);
+        // 再次确认相机权限
         livePermissions.request(Manifest.permission.CAMERA)
                 .observe(getViewLifecycleOwner(), permissionResult -> {
                     if (permissionResult instanceof PermissionResult.Grant) {
                         mRecognizeViewModel.cameraState.setValue(CameraUtils.openCamera());
                     }
                 });
+
         mFaceViewModel.getFaceRecognizeResultMutableLiveData().observe(getViewLifecycleOwner(), result -> {
-            if (result.getFaceFeature() != null) {
-                // 提取特征值成功
-                mFaceViewModel.searchFace(result.getFaceFeature(), result.getTrackId());
+            if (result.getTrackId() == null) {
+                // 没有人脸 Id，说明没有检测到人脸
+                long nowMills = TimeUtils.getNowMills();
+                if (nowMills - sLastNoFaceMills > 300) {
+                    // 连续 300 毫秒无人脸，切换标题
+                    mRecognizeViewModel.titleContent.set(getString(R.string.value_screen_title));
+                    sLastNoFaceMills = nowMills;
+                }
             } else {
-                mFaceViewModel.retryOrFailed(result.getTrackId(), result.getResultCode());
+                // 检测到人脸
+                if (result.getFaceFeature() != null) {
+                    // 提取特征值成功
+                    mFaceViewModel.searchFace(result.getFaceFeature(), result.getTrackId());
+                } else {
+                    // 提取特征值失败，再次重试/最终失败
+                    mFaceViewModel.retryOrFailed(result.getTrackId(), result.getResultCode());
+                }
             }
         });
 
-        mFaceViewModel.getCompareResultMutableLiveData().observe(getViewLifecycleOwner(),
-                compareResult -> getSharedViewModel().mCompareResultLiveData.setValue(compareResult));
+        mFaceViewModel.getCompareResultMutableLiveData().observe(getViewLifecycleOwner(), compareResult -> {
+            if (compareResult.getErrorMsg() != null) {
+                mRecognizeViewModel.titleContent.set(compareResult.getErrorMsg());
+            } else {
+                getSharedViewModel().mCompareResultLiveData.setValue(compareResult);
+            }
+        });
     }
 
 // TODO tip 2：此处通过 DataBinding 来规避 在 setOnClickListener 时存在的 视图调用的一致性问题，

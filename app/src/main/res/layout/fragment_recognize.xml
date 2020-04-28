@@ -63,7 +63,7 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/value_screen_title"
+            android:text="@{vm.titleContent}"
             android:visibility="@{vm.titleState}"
             app:layout_constraintBottom_toTopOf="@id/sv_preview"
             app:layout_constraintEnd_toEndOf="parent"

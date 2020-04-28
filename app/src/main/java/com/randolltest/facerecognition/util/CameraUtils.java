@@ -7,6 +7,7 @@ import android.view.SurfaceHolder;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.randolltest.facerecognition.data.Constants;
+import com.randolltest.facerecognition.ui.base.SharedViewModel;
 
 import java.util.List;
 
@@ -49,6 +50,8 @@ public class CameraUtils {
                 if (size.width - w <= 100) {
                     w = size.width;
                     h = size.height;
+                    SharedViewModel.sPreviewWith.set(w);
+                    SharedViewModel.sPreviewHeight.set(h);
                     LogUtils.i("previewSizes width:" + size.width + " | height:" + size.height);
                     break;
                 }

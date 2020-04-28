@@ -1,4 +1,4 @@
-package com.randolltest.facerecognition.ui.recognize;
+package com.randolltest.facerecognition.ui.base.binding;
 
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;

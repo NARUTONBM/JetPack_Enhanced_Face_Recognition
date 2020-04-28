@@ -2,22 +2,22 @@ package com.randolltest.facerecognition.data.persistence;
 
 import android.content.Context;
 
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-
 import com.randolltest.facerecognition.data.persistence.person.Person;
 import com.randolltest.facerecognition.data.persistence.record.Record;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+
 /**
  * @author narut.
  * @Date 2020-04-26.
  * @Time 14:44.
  */
-@Database(entities = {Person.class, Record.class}, version = 1, exportSchema = false)
+@Database(entities = {Person.class, Record.class}, version = 2, exportSchema = false)
 public abstract class FaceDb extends RoomDatabase {
 
     private static FaceDb INSTANCE;

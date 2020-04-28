@@ -21,6 +21,10 @@ public class Person {
     private String mToken;
 
     @NonNull
+    @ColumnInfo(name = "name")
+    private String mName;
+
+    @NonNull
     @ColumnInfo(name = "feature")
     private String mFeature;
 
@@ -28,8 +32,9 @@ public class Person {
     @ColumnInfo(name = "lib_path")
     private String mLibPath;
 
-    public Person(@NonNull String token, @NonNull String feature, @NonNull String libPath) {
+    public Person(@NonNull String token, @NonNull String name, @NonNull String feature, @NonNull String libPath) {
         mToken = token;
+        mName = name;
         mFeature = feature;
         mLibPath = libPath;
     }
@@ -41,6 +46,15 @@ public class Person {
 
     public void setToken(@NonNull String token) {
         mToken = token;
+    }
+
+    public void setName(@NonNull String name) {
+        mName = name;
+    }
+
+    @NonNull
+    public String getName() {
+        return mName;
     }
 
     @NonNull

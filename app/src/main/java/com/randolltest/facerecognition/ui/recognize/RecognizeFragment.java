@@ -6,14 +6,13 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.View;
 
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.TimeUtils;
 import com.ftd.livepermissions.LivePermissions;
 import com.ftd.livepermissions.PermissionResult;
 import com.randolltest.facerecognition.BR;
 import com.randolltest.facerecognition.R;
 import com.randolltest.facerecognition.ui.base.BaseFragment;
 import com.randolltest.facerecognition.ui.base.DataBindingConfig;
+import com.randolltest.facerecognition.ui.main.FaceViewModel;
 import com.randolltest.facerecognition.util.CameraUtils;
 
 import androidx.annotation.NonNull;
@@ -29,10 +28,12 @@ import androidx.annotation.Nullable;
 public class RecognizeFragment extends BaseFragment {
 
     private RecognizeViewModel mRecognizeViewModel;
+    private FaceViewModel mFaceViewModel;
 
     @Override
     protected void initViewModel() {
         mRecognizeViewModel = getFragmentViewModel(RecognizeViewModel.class);
+        mFaceViewModel = getActivityViewModel(FaceViewModel.class);
     }
 
     @Override
@@ -52,6 +53,17 @@ public class RecognizeFragment extends BaseFragment {
                         mRecognizeViewModel.cameraState.setValue(CameraUtils.openCamera());
                     }
                 });
+        mFaceViewModel.getFaceRecognizeResultMutableLiveData().observe(getViewLifecycleOwner(), result -> {
+            if (result.getFaceFeature() != null) {
+                // 提取特征值成功
+                mFaceViewModel.searchFace(result.getFaceFeature(), result.getTrackId());
+            } else {
+                mFaceViewModel.retryOrFailed(result.getTrackId(), result.getResultCode());
+            }
+        });
+
+        mFaceViewModel.getCompareResultMutableLiveData().observe(getViewLifecycleOwner(),
+                compareResult -> getSharedViewModel().mCompareResultLiveData.setValue(compareResult));
     }
 
 // TODO tip 2：此处通过 DataBinding 来规避 在 setOnClickListener 时存在的 视图调用的一致性问题，
@@ -84,7 +96,7 @@ public class RecognizeFragment extends BaseFragment {
 
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            LogUtils.d(TimeUtils.getNowString() + data.length);
+            mFaceViewModel.recognize(data);
         }
     }
 }

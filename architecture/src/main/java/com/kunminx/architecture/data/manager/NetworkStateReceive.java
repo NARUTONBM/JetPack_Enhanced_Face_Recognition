@@ -22,8 +22,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.NetworkUtils;
 import com.kunminx.architecture.R;
-import com.kunminx.architecture.utils.NetworkUtils;
 
 import java.util.Objects;
 

@@ -4,10 +4,8 @@ import android.Manifest;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.arcsoft.face.ErrorInfo;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.ftd.livepermissions.LivePermissions;
@@ -16,6 +14,11 @@ import com.randolltest.facerecognition.R;
 import com.randolltest.facerecognition.data.Constants;
 import com.randolltest.facerecognition.ui.base.BaseFragment;
 import com.randolltest.facerecognition.ui.base.DataBindingConfig;
+import com.randolltest.facerecognition.ui.recognize.RecognizeFragment;
+import com.randolltest.facerecognition.util.NavigationUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class HomeFragment extends BaseFragment {
 
@@ -48,7 +51,7 @@ public class HomeFragment extends BaseFragment {
             if (activeCode == ErrorInfo.MOK || activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                 SPUtils.getInstance().put(Constants.SP.KEY_ACTIVE_STATE, true);
                 getSharedViewModel().mIsSdkActivated.setValue(true);
-                nav().navigate(R.id.action_homeFragment_to_recognizeFragment);
+                nav().navigate(R.id.action_home_to_recognize);
             } else {
                 ToastUtils.showShort(getString(R.string.active_failed, activeCode));
             }
@@ -65,7 +68,9 @@ public class HomeFragment extends BaseFragment {
                         // 权限允许
                         if (SPUtils.getInstance().getBoolean(Constants.SP.KEY_ACTIVE_STATE, false)) {
                             getSharedViewModel().mIsSdkActivated.setValue(true);
-                            nav().navigate(R.id.action_homeFragment_to_recognizeFragment);
+                            boolean naviResult = NavigationUtils.navi2(nav(), R.id.homeFragment, R.id.action_home_to_recognize);
+                            LogUtils.i(String.format("Navigate to %s %s", RecognizeFragment.class.getSimpleName(), naviResult ? "成功～" :
+                                    "失败！"));
                         } else {
                             // 权限授予但尚未激活
                             getSharedViewModel().mIsSdkActivated.setValue(false);

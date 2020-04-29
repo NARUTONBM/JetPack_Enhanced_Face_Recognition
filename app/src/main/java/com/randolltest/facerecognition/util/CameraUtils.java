@@ -18,6 +18,8 @@ import java.util.List;
  */
 public class CameraUtils {
 
+    public static boolean sIsWorking = false;
+
     public static Camera openCamera() {
         int cameraId = 0;
 
@@ -39,46 +41,49 @@ public class CameraUtils {
     }
 
     public static void startPreview(Camera camera, SurfaceHolder holder, Camera.PreviewCallback callback) {
-        try {
-            camera.setPreviewDisplay(holder);
-            Camera.Parameters parameters = camera.getParameters();
-            List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
+        if (camera != null && !sIsWorking) {
+            try {
+                camera.setPreviewDisplay(holder);
+                Camera.Parameters parameters = camera.getParameters();
+                List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
 
-            int w = Constants.CAMERA_PREVIEW_WIDTH;
-            int h = Constants.CAMERA_PREVIEW_HEIGHT;
-            for (Camera.Size size : previewSizes) {
-                if (size.width - w <= 100) {
-                    w = size.width;
-                    h = size.height;
-                    SharedViewModel.sPreviewWith.set(w);
-                    SharedViewModel.sPreviewHeight.set(h);
-                    LogUtils.i("previewSizes width:" + size.width + " | height:" + size.height);
-                    break;
+                int w = Constants.CAMERA_PREVIEW_WIDTH;
+                int h = Constants.CAMERA_PREVIEW_HEIGHT;
+                for (Camera.Size size : previewSizes) {
+                    if (size.width - w <= 100) {
+                        w = size.width;
+                        h = size.height;
+                        SharedViewModel.sPreviewWith.set(w);
+                        SharedViewModel.sPreviewHeight.set(h);
+                        LogUtils.i("previewSizes width:" + size.width + " | height:" + size.height);
+                        break;
+                    }
                 }
+
+                parameters.setPreviewSize(w, h);
+                parameters.setPictureFormat(ImageFormat.JPEG);
+                parameters.setJpegQuality(Constants.JPEG_QUALITY);
+                parameters.setPictureSize(w, h);
+                camera.setParameters(parameters);
+                camera.setDisplayOrientation(Constants.DISPLAY_ORIENTATION);
+
+                camera.startPreview();
+                camera.setPreviewCallback(callback);
+
+                sIsWorking = true;
+            } catch (Exception e) {
+                LogUtils.e("相机预览出错：" + e.getMessage());
+                e.printStackTrace();
             }
-
-            parameters.setPreviewSize(w, h);
-            parameters.setPictureFormat(ImageFormat.JPEG);
-            parameters.setJpegQuality(Constants.JPEG_QUALITY);
-            parameters.setPictureSize(w, h);
-            camera.setParameters(parameters);
-            camera.setDisplayOrientation(Constants.DISPLAY_ORIENTATION);
-
-            camera.startPreview();
-            camera.setPreviewCallback(callback);
-        } catch (Exception e) {
-            LogUtils.e("相机预览出错：" + e.getMessage());
-            e.printStackTrace();
         }
     }
 
     public static void stopCamera(Camera camera) {
-        if (camera != null) {
-            camera.stopPreview();
+        if (camera != null && sIsWorking) {
             camera.setPreviewCallback(null);
+            camera.stopPreview();
             camera.release();
-        } else {
-            LogUtils.e("关闭相机出错： parameter 'camera' is null！");
+            sIsWorking = false;
         }
     }
 }

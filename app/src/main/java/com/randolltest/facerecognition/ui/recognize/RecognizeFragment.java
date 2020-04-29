@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.ftd.livepermissions.LivePermissions;
 import com.ftd.livepermissions.PermissionResult;
@@ -14,7 +15,9 @@ import com.randolltest.facerecognition.R;
 import com.randolltest.facerecognition.ui.base.BaseFragment;
 import com.randolltest.facerecognition.ui.base.DataBindingConfig;
 import com.randolltest.facerecognition.ui.main.FaceViewModel;
+import com.randolltest.facerecognition.ui.manage.ManageFragment;
 import com.randolltest.facerecognition.util.CameraUtils;
+import com.randolltest.facerecognition.util.NavigationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,7 +45,7 @@ public class RecognizeFragment extends BaseFragment {
     protected DataBindingConfig getDataBindingConfig() {
         return new DataBindingConfig(R.layout.fragment_recognize, mRecognizeViewModel)
                 .addBindingParam(BR.click, new ClickProxy())
-                .addBindingParam(BR.camera, new CameraProxy());
+                .addBindingParam(BR.recognizeCamera, new CameraProxy());
     }
 
     @Override
@@ -88,7 +91,7 @@ public class RecognizeFragment extends BaseFragment {
         });
     }
 
-// TODO tip 2：此处通过 DataBinding 来规避 在 setOnClickListener 时存在的 视图调用的一致性问题，
+    // TODO tip 2：此处通过 DataBinding 来规避 在 setOnClickListener 时存在的 视图调用的一致性问题，
 
 // 也即，有绑定就有绑定，没绑定也没什么大不了的，总之 不会因一致性问题造成 视图调用的空指针。
 // 如果这么说还不理解的话，详见 https://xiaozhuanlan.com/topic/9816742350
@@ -96,7 +99,12 @@ public class RecognizeFragment extends BaseFragment {
     public class ClickProxy {
 
         public void openManage() {
-            nav().navigate(R.id.action_recognizeFragment_to_manageFragment);
+            // 关闭相机
+            //CameraUtils.stopCamera(mRecognizeViewModel.cameraState.getValue());
+            mRecognizeViewModel.cameraState.setValue(null);
+            // 跳转
+            boolean naviResult = NavigationUtils.navi2(nav(), R.id.recognizeFragment, R.id.action_recognize_to_manage);
+            LogUtils.i(String.format("Navigate to %s %s", ManageFragment.class.getSimpleName(), naviResult ? "成功～" : "失败！"));
         }
     }
 

@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_recognize">
 
         <action
-            android:id="@+id/action_recognizeFragment_to_manageFragment"
+            android:id="@+id/action_recognize_to_manage"
             app:destination="@id/manageFragment" />
 
     </fragment>
@@ -24,10 +24,13 @@
         tools:layout="@layout/fragment_manage">
 
         <action
-            android:id="@+id/action_manageFragment_to_recognizeFragment"
+            android:id="@+id/action_manage_to_recognize"
             app:destination="@id/recognizeFragment"
             app:popUpTo="@id/recognizeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_manage_to_register"
+            app:destination="@id/registerFragment" />
 
     </fragment>
 
@@ -38,9 +41,20 @@
         tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_homeFragment_to_recognizeFragment"
+            android:id="@+id/action_home_to_recognize"
             app:destination="@id/recognizeFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.randolltest.facerecognition.ui.register.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_register_to_manage"
+            app:destination="@id/manageFragment"
+            app:popUpTo="@id/manageFragment"
+            app:launchSingleTop="true" />
     </fragment>
 
 </navigation>

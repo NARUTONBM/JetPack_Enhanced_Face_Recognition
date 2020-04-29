@@ -3,4 +3,11 @@
     <string name="value_screen_title">JetPack_Enhanced_Face_Recognition</string>
     <string name="value_manage_title">设置</string>
     <string name="active_failed">引擎激活失败，错误码为 %d</string>
+    <string name="value_bt_register">人员注册</string>
+    <string name="value_bt_records">刷脸记录</string>
+    <string name="value_bt_clear">清空脸库</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="value_btn_register">注册</string>
 </resources>

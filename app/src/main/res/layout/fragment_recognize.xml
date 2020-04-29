@@ -14,7 +14,7 @@
             type="com.randolltest.facerecognition.ui.recognize.RecognizeViewModel" />
 
         <variable
-            name="camera"
+            name="recognizeCamera"
             type="com.randolltest.facerecognition.ui.recognize.RecognizeFragment.CameraProxy" />
     </data>
 
@@ -23,14 +23,14 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/iv_capture"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:scaleType="centerCrop"
             android:visibility="@{vm.recognizeState}"
-            app:layout_constraintBottom_toTopOf="@id/sv_preview"
+            app:layout_constraintBottom_toTopOf="@id/sv_recognize_preview"
             app:layout_constraintDimensionRatio="3:5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -38,24 +38,24 @@
             tools:srcCompat="@tools:sample/avatars[0]" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:visibility="@{vm.recognizeState}"
-            app:layout_constraintBottom_toTopOf="@id/textView2"
-            app:layout_constraintStart_toEndOf="@id/imageView"
-            app:layout_constraintTop_toTopOf="@id/imageView"
+            app:layout_constraintBottom_toTopOf="@id/tv_reminder"
+            app:layout_constraintStart_toEndOf="@id/iv_capture"
+            app:layout_constraintTop_toTopOf="@id/iv_capture"
             tools:text="TextView" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tv_reminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{vm.recognizeState}"
-            app:layout_constraintBottom_toBottomOf="@id/imageView"
-            app:layout_constraintStart_toStartOf="@id/textView"
-            app:layout_constraintTop_toBottomOf="@id/textView"
+            app:layout_constraintBottom_toBottomOf="@id/iv_capture"
+            app:layout_constraintStart_toStartOf="@id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
             tools:text="TextView" />
 
         <TextView
@@ -65,41 +65,42 @@
             android:layout_height="wrap_content"
             android:text="@{vm.titleContent}"
             android:visibility="@{vm.titleState}"
-            app:layout_constraintBottom_toTopOf="@id/sv_preview"
+            app:layout_constraintBottom_toTopOf="@id/sv_recognize_preview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <SurfaceView
-            android:id="@+id/sv_preview"
-            openCamera="@{camera}"
+            android:id="@+id/sv_recognize_preview"
+            openCamera="@{recognizeCamera}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="3:5"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.493"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageView"
+            app:layout_constraintTop_toBottomOf="@id/iv_capture"
             app:layout_constraintVertical_weight="4" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tv_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:visibility="@{vm.recognizeState}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/sv_preview"
+            app:layout_constraintTop_toTopOf="@id/sv_recognize_preview"
             tools:text="TextView" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/iv_manage"
             openCamera="@{}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:onClick="@{()->click.openManage()}"
             app:layout_constraintEnd_toEndOf="parent"

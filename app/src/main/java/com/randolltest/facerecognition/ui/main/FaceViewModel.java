@@ -3,6 +3,11 @@ package com.randolltest.facerecognition.ui.main;
 import android.app.Application;
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.arcsoft.face.FaceFeature;
 import com.kunminx.architecture.bridge.callback.UnPeekLiveData;
 import com.randolltest.facerecognition.data.CompareResult;
@@ -12,11 +17,6 @@ import com.randolltest.facerecognition.data.persistence.person.Person;
 import com.randolltest.facerecognition.face.FaceManager;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 /**
  * 人脸识别算法的业务

@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.ftd.livepermissions.LivePermissions;
@@ -18,9 +21,6 @@ import com.randolltest.facerecognition.ui.main.FaceViewModel;
 import com.randolltest.facerecognition.ui.manage.ManageFragment;
 import com.randolltest.facerecognition.util.CameraUtils;
 import com.randolltest.facerecognition.util.NavigationUtils;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * 识别页面
@@ -101,7 +101,7 @@ public class RecognizeFragment extends BaseFragment {
         public void openManage() {
             // 关闭相机
             //CameraUtils.stopCamera(mRecognizeViewModel.cameraState.getValue());
-            mRecognizeViewModel.cameraState.setValue(null);
+            mRecognizeViewModel.cameraState.removeObservers(getViewLifecycleOwner());
             LogUtils.i(RecognizeFragment.class.getSimpleName() + " leave");
             mFaceViewModel.getFaceRecognizeResultLiveData().removeObservers(getViewLifecycleOwner());
             // 跳转

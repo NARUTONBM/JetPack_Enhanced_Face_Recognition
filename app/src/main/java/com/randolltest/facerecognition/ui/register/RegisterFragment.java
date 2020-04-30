@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -24,9 +27,6 @@ import com.randolltest.facerecognition.util.FeatureUtils;
 import com.randolltest.facerecognition.util.NavigationUtils;
 
 import java.util.UUID;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class RegisterFragment extends BaseFragment {
 
@@ -100,7 +100,7 @@ public class RegisterFragment extends BaseFragment {
 
         public void takePicture() {
             mRegisterViewModel.registerClickable.set(false);
-            mFaceViewModel.getTakePicture().setValue(1);
+            mFaceViewModel.getTakePicture().setValue(-1);
         }
     }
 
@@ -122,10 +122,11 @@ public class RegisterFragment extends BaseFragment {
 
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            mFaceViewModel.getTakePicture().observe(getViewLifecycleOwner(), integer -> {
+            if (mFaceViewModel.getTakePicture().getValue() != null && mFaceViewModel.getTakePicture().getValue() == -1) {
+                mFaceViewModel.getTakePicture().setValue(0);
                 mFaceViewModel.saveRegisterPicture(data);
                 mFaceViewModel.extractFeature(data);
-            });
+            }
         }
     }
 }

@@ -27,7 +27,7 @@ public class CameraUtils {
         if (numberOfCameras == 0) {
             ToastUtils.showShort("无可用相机！");
             return null;
-        } else {
+        } else if (numberOfCameras > 1) {
             while (cameraId < numberOfCameras) {
                 Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
                 Camera.getCameraInfo(cameraId, cameraInfo);

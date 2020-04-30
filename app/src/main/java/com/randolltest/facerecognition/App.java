@@ -3,14 +3,15 @@ package com.randolltest.facerecognition;
 import android.app.Activity;
 import android.app.Application;
 
+import com.blankj.utilcode.util.Utils;
+import com.randolltest.facerecognition.face.FeatureMap;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
-
-import com.blankj.utilcode.util.Utils;
-import com.randolltest.facerecognition.face.FeatureMap;
+import leakcanary.LeakCanary;
 
 /**
  * @author narut.
@@ -29,6 +30,12 @@ public class App extends Application implements ViewModelStoreOwner {
         mViewModelStore = new ViewModelStore();
         FeatureMap.init();
         Utils.init(this);
+
+        LeakCanary.Config config = LeakCanary.getConfig().newBuilder()
+                .retainedVisibleThreshold(3)
+                .computeRetainedHeapSize(false)
+                .build();
+        LeakCanary.setConfig(config);
     }
 
     @NonNull

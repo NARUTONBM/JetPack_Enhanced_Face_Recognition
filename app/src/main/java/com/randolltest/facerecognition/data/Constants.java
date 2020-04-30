@@ -1,5 +1,11 @@
 package com.randolltest.facerecognition.data;
 
+import android.os.Environment;
+
+import com.blankj.utilcode.util.AppUtils;
+
+import java.io.File;
+
 /**
  * @author randoll.
  * @Date 4/23/20.
@@ -26,6 +32,15 @@ public class Constants {
      * 识别阈值
      */
     public static final float SIMILAR_THRESHOLD = 0.8F;
+    /**
+     * 抓拍注册照片存储路径
+     */
+    public static final String REGISTER_PICTURE_PATH_PREFIX = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
+            "Android" + AppUtils.getAppPackageName() + "pictures/";
+    /**
+     * 抓拍注册照片默认文件名
+     */
+    public static final String REGISTER_PICTURE_DEFAULT_NAME = "register.jpg";
 
     public static class SP {
 

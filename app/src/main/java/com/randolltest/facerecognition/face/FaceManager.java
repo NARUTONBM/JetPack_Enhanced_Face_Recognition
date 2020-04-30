@@ -1,5 +1,7 @@
 package com.randolltest.facerecognition.face;
 
+import android.graphics.Bitmap;
+
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.arcsoft.face.FaceFeature;
@@ -19,6 +21,7 @@ import com.randolltest.facerecognition.data.persistence.person.Person;
 import com.randolltest.facerecognition.ui.base.SharedViewModel;
 import com.randolltest.facerecognition.ui.main.MainActivity;
 import com.randolltest.facerecognition.util.FeatureUtils;
+import com.randolltest.facerecognition.util.ImageUtils;
 
 import java.util.Enumeration;
 import java.util.List;
@@ -138,7 +141,6 @@ public class FaceManager implements DefaultLifecycleObserver {
                 mFaceHelper = new FaceHelper.Builder()
                         .ftEngine(mFtEngine)
                         .frEngine(mFrEngine)
-                        .flEngine(mFlEngine)
                         .frQueueSize(MAX_DETECT_NUM)
                         .flQueueSize(MAX_DETECT_NUM)
                         .trackedFaceCount(mSPUtils.getInt(Constants.SP.TRACKED_FACE_COUNT))
@@ -260,10 +262,10 @@ public class FaceManager implements DefaultLifecycleObserver {
             liveData.setValue(compareResult);
             return;
         }
-        FaceFeature tempFaceFeature = new FaceFeature();
-        FaceSimilar faceSimilar = new FaceSimilar();
         isProcessing = true;
         compareExecutor.execute(() -> {
+            FaceFeature tempFaceFeature = new FaceFeature();
+            FaceSimilar faceSimilar = new FaceSimilar();
             float maxSimilar = 0;
             String maxSimilarToken = "";
             for (Map.Entry<String, byte[]> map : mFeatureMap.getMap().entrySet()) {
@@ -277,13 +279,26 @@ public class FaceManager implements DefaultLifecycleObserver {
 
             CompareResult compareResult = new CompareResult();
             compareResult.setTrackId(trackId);
-            if (!maxSimilarToken.isEmpty()) {
+            if (!maxSimilarToken.isEmpty() && faceRepository.getPersonByToken(maxSimilarToken).getValue() != null) {
                 compareResult.setUserName(faceRepository.getPersonByToken(maxSimilarToken).getValue().getName());
                 compareResult.setSimilar(maxSimilar);
             }
             liveData.postValue(compareResult);
             isProcessing = false;
         });
+    }
+
+    public void extractFeature(byte[] data, MutableLiveData<FaceRecognizeResult> liveData) {
+        List<FacePreviewInfo> facePreviewInfoList = mFaceHelper.onPreviewFrame(data, liveData);
+
+        clearLeftFace(facePreviewInfoList);
+
+        if (facePreviewInfoList != null && facePreviewInfoList.size() > 0) {
+            // 默认注册时只有一张人脸
+            FacePreviewInfo facePreviewInfo = facePreviewInfoList.get(0);
+            mFaceHelper.requestFaceFeature(data, facePreviewInfo.getFaceInfo(), FaceEngine.CP_PAF_NV21, facePreviewInfo.getTrackId(),
+                    liveData);
+        }
     }
 
     public void retryOrFailed(int trackId, int resultCode) {
@@ -322,6 +337,20 @@ public class FaceManager implements DefaultLifecycleObserver {
         }
         countMap.put(key, ++value);
         return value;
+    }
+
+    public void saveRegisterPicture(byte[] data, MutableLiveData<Bitmap> LiveData) {
+        ioNetExecutor.execute(() -> {
+            Bitmap bitmap = ImageUtils.getCameraPreviewPicWithoutSave(data, Constants.DISPLAY_ORIENTATION);
+            boolean saveResult = ImageUtils.save(bitmap, Constants.REGISTER_PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME
+                    , Bitmap.CompressFormat.JPEG);
+            if (saveResult) {
+                LiveData.postValue(bitmap);
+            } else {
+                LiveData.postValue(null);
+            }
+            LogUtils.d("图像保存结果：" + (saveResult ? "成功" : "失败"));
+        });
     }
 
     /**

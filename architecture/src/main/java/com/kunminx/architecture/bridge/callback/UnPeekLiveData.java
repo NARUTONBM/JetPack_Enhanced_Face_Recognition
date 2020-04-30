@@ -16,15 +16,15 @@
 
 package com.kunminx.architecture.bridge.callback;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Map;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * 仅分发 owner observe 后 才新拿到的数据
@@ -81,5 +81,4 @@ public class UnPeekLiveData<T> extends MutableLiveData<T> {
             e.printStackTrace();
         }
     }
-
 }

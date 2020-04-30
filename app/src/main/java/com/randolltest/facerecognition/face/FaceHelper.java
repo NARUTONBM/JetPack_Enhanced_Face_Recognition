@@ -308,7 +308,6 @@ public class FaceHelper {
     public static final class Builder {
         private FaceEngine ftEngine;
         private FaceEngine frEngine;
-        private FaceEngine flEngine;
         private int frQueueSize;
         private int flQueueSize;
         private int trackedFaceCount;
@@ -323,11 +322,6 @@ public class FaceHelper {
 
         public Builder frEngine(FaceEngine val) {
             frEngine = val;
-            return this;
-        }
-
-        public Builder flEngine(FaceEngine val) {
-            flEngine = val;
             return this;
         }
 

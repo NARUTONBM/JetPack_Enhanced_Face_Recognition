@@ -121,6 +121,12 @@ public abstract class BaseFragment extends Fragment {
         return super.onCreateAnimation(transit, enter, nextAnim);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBinding = null;
+    }
+
     protected void loadInitData() {
     }
 

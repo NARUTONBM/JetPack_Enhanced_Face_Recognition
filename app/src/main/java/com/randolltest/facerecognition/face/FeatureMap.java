@@ -68,7 +68,7 @@ public class FeatureMap {
     }
 
     public boolean contains(String name) {
-        return mFeatureMap.containsValue(name);
+        return mFeatureMap.containsKey(name);
     }
 
     public Map<String, byte[]> getMap() {

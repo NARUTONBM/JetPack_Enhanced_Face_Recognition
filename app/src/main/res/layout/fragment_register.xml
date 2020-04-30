@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="vm"
+            type="com.randolltest.facerecognition.ui.register.RegisterViewModel" />
+
+        <variable
             name="click"
             type="com.randolltest.facerecognition.ui.register.RegisterFragment.ClickProxy" />
 
@@ -48,11 +52,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
             android:layout_marginBottom="100dp"
+            android:clickable="@{vm.registerClickable}"
+            android:onClick="@{()->click.takePicture()}"
             android:text="@string/value_btn_register"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sv_register_preview" />
+
+        <ImageView
+            android:id="@+id/iv_register"
+            setImage="@{vm.registerPicture}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:visibility="@{vm.pictureState}"
+            app:layout_constraintBottom_toBottomOf="@id/sv_register_preview"
+            app:layout_constraintEnd_toEndOf="@id/sv_register_preview"
+            app:layout_constraintStart_toStartOf="@id/sv_register_preview"
+            app:layout_constraintTop_toTopOf="@id/sv_register_preview"
+            tools:srcCompat="@tools:sample/avatars" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

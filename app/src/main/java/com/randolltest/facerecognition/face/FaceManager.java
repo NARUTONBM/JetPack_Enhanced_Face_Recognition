@@ -10,11 +10,13 @@ import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.kunminx.architecture.bridge.callback.UnPeekLiveData;
 import com.randolltest.facerecognition.BuildConfig;
 import com.randolltest.facerecognition.data.CompareResult;
 import com.randolltest.facerecognition.data.Constants;
 import com.randolltest.facerecognition.data.FacePreviewInfo;
-import com.randolltest.facerecognition.data.FaceRecognizeResult;
+import com.randolltest.facerecognition.data.FeatureDetectResult;
+import com.randolltest.facerecognition.data.RecognizeResult;
 import com.randolltest.facerecognition.data.RequestFeatureStatus;
 import com.randolltest.facerecognition.data.persistence.FaceRepository;
 import com.randolltest.facerecognition.data.persistence.person.Person;
@@ -23,6 +25,7 @@ import com.randolltest.facerecognition.ui.main.MainActivity;
 import com.randolltest.facerecognition.util.FeatureUtils;
 import com.randolltest.facerecognition.util.ImageUtils;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +78,7 @@ public class FaceManager implements DefaultLifecycleObserver {
      * 用于记录人脸特征提取出错重试次数
      */
     private ConcurrentHashMap<Integer, Integer> mExtractErrorRetryMap = new ConcurrentHashMap<>();
-    private List<CompareResult> compareResultList;
+    private List<CompareResult> mCompareResultList;
     private FaceHelper mFaceHelper;
     private SPUtils mSPUtils;
     private boolean isProcessing;
@@ -99,6 +102,7 @@ public class FaceManager implements DefaultLifecycleObserver {
         MainActivity activity = (MainActivity) owner;
         SharedViewModel sharedViewModel = activity.getSharedViewModel();
         mSPUtils = SPUtils.getInstance();
+        mCompareResultList = new ArrayList<>();
 
         sharedViewModel.mIsSdkActivated.observe(owner, isSdkActivated -> {
             if (!isSdkActivated) {
@@ -147,42 +151,6 @@ public class FaceManager implements DefaultLifecycleObserver {
                         .build();
             }
         });
-
-        sharedViewModel.mCompareResultLiveData.observe(owner, compareResult -> {
-            int trackId = compareResult.getTrackId();
-            if (compareResult.getUserName() == null) {
-                mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.FAILED);
-                mFaceHelper.setName(trackId, "VISITOR " + trackId);
-                return;
-            }
-
-            if (compareResult.getSimilar() > Constants.SIMILAR_THRESHOLD) {
-                boolean isAdded = false;
-                if (compareResultList == null) {
-                    mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.FAILED);
-                    mFaceHelper.setName(trackId, "VISITOR " + trackId);
-                    return;
-                }
-                for (CompareResult compareResult1 : compareResultList) {
-                    if (compareResult1.getTrackId() == trackId) {
-                        isAdded = true;
-                        break;
-                    }
-                }
-                if (!isAdded) {
-                    //对于多人脸搜索，假如最大显示数量为 MAX_DETECT_NUM 且有新的人脸进入，则以队列的形式移除
-                    if (compareResultList.size() >= MAX_DETECT_NUM) {
-                        compareResultList.remove(0);
-                    }
-                    compareResultList.add(compareResult);
-                }
-                mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.SUCCEED);
-                mFaceHelper.setName(trackId, compareResult.getUserName());
-            } else {
-                mFaceHelper.setName(trackId, "NOT_REGISTERED");
-                mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.TO_RETRY);
-            }
-        });
     }
 
     public void loadFeature(List<Person> personList) {
@@ -196,7 +164,7 @@ public class FaceManager implements DefaultLifecycleObserver {
         }
     }
 
-    public void recognize(byte[] data, MutableLiveData<FaceRecognizeResult> liveData) {
+    public void recognize(byte[] data, MutableLiveData<FeatureDetectResult> liveData) {
         List<FacePreviewInfo> facePreviewInfoList = mFaceHelper.onPreviewFrame(data, liveData);
 
         clearLeftFace(facePreviewInfoList);
@@ -224,10 +192,10 @@ public class FaceManager implements DefaultLifecycleObserver {
      * @param facePreviewInfoList 人脸和trackId列表
      */
     private void clearLeftFace(List<FacePreviewInfo> facePreviewInfoList) {
-        if (compareResultList != null) {
-            for (int i = compareResultList.size() - 1; i >= 0; i--) {
-                if (!mRequestFeatureStatusMap.containsKey(compareResultList.get(i).getTrackId())) {
-                    compareResultList.remove(i);
+        if (mCompareResultList != null) {
+            for (int i = mCompareResultList.size() - 1; i >= 0; i--) {
+                if (!mRequestFeatureStatusMap.containsKey(mCompareResultList.get(i).getTrackId())) {
+                    mCompareResultList.remove(i);
                 }
             }
         }
@@ -279,16 +247,16 @@ public class FaceManager implements DefaultLifecycleObserver {
 
             CompareResult compareResult = new CompareResult();
             compareResult.setTrackId(trackId);
-            if (!maxSimilarToken.isEmpty() && faceRepository.getPersonByToken(maxSimilarToken).getValue() != null) {
-                compareResult.setUserName(faceRepository.getPersonByToken(maxSimilarToken).getValue().getName());
+            if (!maxSimilarToken.isEmpty()) {
                 compareResult.setSimilar(maxSimilar);
+                compareResult.setToken(maxSimilarToken);
             }
             liveData.postValue(compareResult);
             isProcessing = false;
         });
     }
 
-    public void extractFeature(byte[] data, MutableLiveData<FaceRecognizeResult> liveData) {
+    public void extractFeature(byte[] data, MutableLiveData<FeatureDetectResult> liveData) {
         List<FacePreviewInfo> facePreviewInfoList = mFaceHelper.onPreviewFrame(data, liveData);
 
         clearLeftFace(facePreviewInfoList);
@@ -320,6 +288,45 @@ public class FaceManager implements DefaultLifecycleObserver {
         }
     }
 
+    public void judgeQuality(CompareResult compareResult, UnPeekLiveData<RecognizeResult> liveData) {
+        RecognizeResult recognizeResult = new RecognizeResult();
+        int trackId = compareResult.getTrackId();
+        recognizeResult.setTrackId(trackId);
+        if (compareResult.getUserName() == null) {
+            mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.FAILED);
+            recognizeResult.setName("VISITOR " + trackId);
+            return;
+        }
+
+        if (compareResult.getSimilar() > Constants.SIMILAR_THRESHOLD) {
+            boolean isAdded = false;
+            if (mCompareResultList == null) {
+                mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.FAILED);
+                recognizeResult.setName("VISITOR " + trackId);
+                return;
+            }
+            for (CompareResult compareResult1 : mCompareResultList) {
+                if (compareResult1.getTrackId() == trackId) {
+                    isAdded = true;
+                    break;
+                }
+            }
+            if (!isAdded) {
+                //对于多人脸搜索，假如最大显示数量为 MAX_DETECT_NUM 且有新的人脸进入，则以队列的形式移除
+                if (mCompareResultList.size() >= MAX_DETECT_NUM) {
+                    mCompareResultList.remove(0);
+                }
+                mCompareResultList.add(compareResult);
+            }
+            mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.SUCCEED);
+            recognizeResult.setName(compareResult.getUserName());
+        } else {
+            mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.TO_RETRY);
+            recognizeResult.setMsg("NOT_REGISTERED");
+        }
+        liveData.setValue(recognizeResult);
+    }
+
     /**
      * 将map中key对应的value增1回传
      *
@@ -341,15 +348,15 @@ public class FaceManager implements DefaultLifecycleObserver {
 
     public void saveRegisterPicture(byte[] data, MutableLiveData<Bitmap> LiveData) {
         ioNetExecutor.execute(() -> {
-            Bitmap bitmap = ImageUtils.getCameraPreviewPicWithoutSave(data, Constants.DISPLAY_ORIENTATION);
-            boolean saveResult = ImageUtils.save(bitmap, Constants.REGISTER_PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME
+            Bitmap bitmap = ImageUtils.getCameraPreviewPicWithoutSave(data, Constants.PICTURE_SAVE_ROTATION);
+            boolean saveResult = ImageUtils.save(bitmap, Constants.PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME
                     , Bitmap.CompressFormat.JPEG);
             if (saveResult) {
                 LiveData.postValue(bitmap);
             } else {
                 LiveData.postValue(null);
             }
-            LogUtils.d("图像保存结果：" + (saveResult ? "成功" : "失败"));
+            LogUtils.d("注册图像保存结果：" + (saveResult ? "成功" : "失败"));
         });
     }
 

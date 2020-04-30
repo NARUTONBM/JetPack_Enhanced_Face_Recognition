@@ -3,13 +3,13 @@ package com.randolltest.facerecognition.data;
 import com.arcsoft.face.FaceFeature;
 
 /**
- * 相机帧识别结果
+ * 相机帧提取人脸特征值结果
  *
  * @author randoll.
  * @Date 4/28/20.
  * @Time 21:07.
  */
-public class FaceRecognizeResult {
+public class FeatureDetectResult {
 
     private int mResultCode;
     private Integer mTrackId;

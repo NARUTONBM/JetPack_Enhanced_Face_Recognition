@@ -35,9 +35,7 @@ public class ImageUtils {
             return null;
         }
         byte[] tmp = os.toByteArray();
-        BitmapFactory.Options options = setBitmapFactoryOption(SharedViewModel.sPreviewWith.get() / 2,
-                SharedViewModel.sPreviewHeight.get() / 2);
-        Bitmap bmp = BitmapFactory.decodeByteArray(tmp, 0, tmp.length, options);
+        Bitmap bmp = BitmapFactory.decodeByteArray(tmp, 0, tmp.length);
         Bitmap rotateBitmap = rotateBitmap(bmp, rotateDegrees);
         if (!bmp.isRecycled()) {
             bmp.recycle();

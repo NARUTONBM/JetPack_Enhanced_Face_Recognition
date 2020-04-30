@@ -3,20 +3,21 @@ package com.randolltest.facerecognition.ui.main;
 import android.app.Application;
 import android.graphics.Bitmap;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.arcsoft.face.FaceFeature;
 import com.kunminx.architecture.bridge.callback.UnPeekLiveData;
 import com.randolltest.facerecognition.data.CompareResult;
-import com.randolltest.facerecognition.data.FaceRecognizeResult;
+import com.randolltest.facerecognition.data.FeatureDetectResult;
+import com.randolltest.facerecognition.data.RecognizeResult;
 import com.randolltest.facerecognition.data.persistence.FaceRepository;
 import com.randolltest.facerecognition.data.persistence.person.Person;
 import com.randolltest.facerecognition.face.FaceManager;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 /**
  * 人脸识别算法的业务
@@ -27,10 +28,11 @@ import java.util.List;
  */
 public class FaceViewModel extends AndroidViewModel {
 
-    private final FaceRepository mFaceRepository;
+    private FaceRepository mFaceRepository;
 
     private MutableLiveData<CompareResult> mCompareResultLiveData;
-    private MutableLiveData<FaceRecognizeResult> mFaceRecognizeResultLiveData;
+    private MutableLiveData<FeatureDetectResult> mFeatureDetectResultLiveData;
+    private UnPeekLiveData<RecognizeResult> mRecognizeResultLiveData;
     private UnPeekLiveData<Integer> mTakePicture;
     private MutableLiveData<Bitmap> mRegisterBitmapLiveData;
 
@@ -39,6 +41,13 @@ public class FaceViewModel extends AndroidViewModel {
         mFaceRepository = new FaceRepository(application);
     }
 
+    public FaceRepository getFaceRepository() {
+        return mFaceRepository;
+    }
+
+    /**
+     * @return 提取到的特征值比对结果
+     */
     public LiveData<CompareResult> getCompareResultLiveData() {
         if (mCompareResultLiveData == null) {
             mCompareResultLiveData = new MutableLiveData<>();
@@ -47,14 +56,20 @@ public class FaceViewModel extends AndroidViewModel {
         return mCompareResultLiveData;
     }
 
-    public MutableLiveData<FaceRecognizeResult> getFaceRecognizeResultLiveData() {
-        if (mFaceRecognizeResultLiveData == null) {
-            mFaceRecognizeResultLiveData = new MutableLiveData<>();
+    /**
+     * @return 相机帧特征值提取结果
+     */
+    public LiveData<FeatureDetectResult> getFeatureDetectResultLiveData() {
+        if (mFeatureDetectResultLiveData == null) {
+            mFeatureDetectResultLiveData = new MutableLiveData<>();
         }
 
-        return mFaceRecognizeResultLiveData;
+        return mFeatureDetectResultLiveData;
     }
 
+    /**
+     * @return 注册页的拍照按钮
+     */
     public UnPeekLiveData<Integer> getTakePicture() {
         if (mTakePicture == null) {
             mTakePicture = new UnPeekLiveData<>();
@@ -62,11 +77,24 @@ public class FaceViewModel extends AndroidViewModel {
         return mTakePicture;
     }
 
+    /**
+     * @return 注册页提取到了特征值的 Bitmap 照片
+     */
     public LiveData<Bitmap> getRegisterBitmapLiveData() {
         if (mRegisterBitmapLiveData == null) {
             mRegisterBitmapLiveData = new MutableLiveData<>();
         }
         return mRegisterBitmapLiveData;
+    }
+
+    /**
+     * @return 最终的识别结果
+     */
+    public LiveData<RecognizeResult> getRecognizeResultLiveData() {
+        if (mRecognizeResultLiveData == null) {
+            mRecognizeResultLiveData = new UnPeekLiveData<>();
+        }
+        return mRecognizeResultLiveData;
     }
 
     LiveData<List<Person>> getAllPersons() {
@@ -86,7 +114,7 @@ public class FaceViewModel extends AndroidViewModel {
     }
 
     public void recognize(byte[] data) {
-        getFaceManager().recognize(data, mFaceRecognizeResultLiveData);
+        getFaceManager().recognize(data, mFeatureDetectResultLiveData);
     }
 
     public void searchFace(FaceFeature faceFeature, int trackId) {
@@ -98,10 +126,14 @@ public class FaceViewModel extends AndroidViewModel {
     }
 
     public void extractFeature(byte[] data) {
-        getFaceManager().extractFeature(data, mFaceRecognizeResultLiveData);
+        getFaceManager().extractFeature(data, mFeatureDetectResultLiveData);
     }
 
     public void saveRegisterPicture(byte[] data) {
         getFaceManager().saveRegisterPicture(data, mRegisterBitmapLiveData);
+    }
+
+    public void judgeQuality(CompareResult compareResult) {
+        getFaceManager().judgeQuality(compareResult, mRecognizeResultLiveData);
     }
 }

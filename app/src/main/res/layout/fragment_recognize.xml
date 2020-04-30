@@ -24,11 +24,13 @@
 
         <ImageView
             android:id="@+id/iv_capture"
+            setImagePath="@{vm.pictureContent}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:scaleType="centerCrop"
+
             android:visibility="@{vm.recognizeState}"
             app:layout_constraintBottom_toTopOf="@id/sv_recognize_preview"
             app:layout_constraintDimensionRatio="3:5"
@@ -42,21 +44,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
+            android:text="@{vm.nameContent}"
             android:visibility="@{vm.recognizeState}"
             app:layout_constraintBottom_toTopOf="@id/tv_reminder"
             app:layout_constraintStart_toEndOf="@id/iv_capture"
-            app:layout_constraintTop_toTopOf="@id/iv_capture"
-            tools:text="TextView" />
+            app:layout_constraintTop_toTopOf="@id/iv_capture" />
 
         <TextView
             android:id="@+id/tv_reminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{vm.msgContent}"
             android:visibility="@{vm.recognizeState}"
             app:layout_constraintBottom_toBottomOf="@id/iv_capture"
             app:layout_constraintStart_toStartOf="@id/tv_name"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
-            tools:text="TextView" />
+            app:layout_constraintTop_toBottomOf="@id/tv_name" />
 
         <TextView
             android:id="@+id/textView4"

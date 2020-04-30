@@ -6,21 +6,23 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.ftd.livepermissions.LivePermissions;
 import com.ftd.livepermissions.PermissionResult;
 import com.randolltest.facerecognition.BR;
 import com.randolltest.facerecognition.R;
+import com.randolltest.facerecognition.data.Constants;
 import com.randolltest.facerecognition.ui.base.BaseFragment;
 import com.randolltest.facerecognition.ui.base.DataBindingConfig;
 import com.randolltest.facerecognition.ui.main.FaceViewModel;
 import com.randolltest.facerecognition.ui.manage.ManageFragment;
 import com.randolltest.facerecognition.util.CameraUtils;
 import com.randolltest.facerecognition.util.NavigationUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * 识别页面
@@ -61,7 +63,7 @@ public class RecognizeFragment extends BaseFragment {
                     }
                 });
 
-        mFaceViewModel.getFaceRecognizeResultLiveData().observe(getViewLifecycleOwner(), result -> {
+        mFaceViewModel.getFeatureDetectResultLiveData().observe(getViewLifecycleOwner(), result -> {
             if (result.getTrackId() == null) {
                 // 没有人脸 Id，说明没有检测到人脸
                 long nowMills = TimeUtils.getNowMills();
@@ -83,10 +85,33 @@ public class RecognizeFragment extends BaseFragment {
         });
 
         mFaceViewModel.getCompareResultLiveData().observe(getViewLifecycleOwner(), compareResult -> {
-            if (compareResult.getErrorMsg() != null) {
-                mRecognizeViewModel.titleContent.set(compareResult.getErrorMsg());
-            } else {
-                getSharedViewModel().mCompareResultLiveData.setValue(compareResult);
+            if (compareResult.getToken() != null) {
+                mFaceViewModel.getFaceRepository().getPersonByToken(compareResult.getToken()).observe(getViewLifecycleOwner(), person -> {
+                    compareResult.setUserName(person.getName());
+                    if (compareResult.getErrorMsg() != null) {
+                        mRecognizeViewModel.titleContent.set(compareResult.getErrorMsg());
+                    } else {
+                        mFaceViewModel.judgeQuality(compareResult);
+                    }
+                });
+            }
+        });
+
+        mFaceViewModel.getRecognizeResultLiveData().observe(getViewLifecycleOwner(), result -> {
+            String recognizePath = Constants.PICTURE_PATH_PREFIX + TimeUtils.getNowString() + ".jpg";
+            FileUtils.rename(Constants.PICTURE_PATH_PREFIX + Constants.RECOGNIZE_PICTURE_DEFAULT_NAME, recognizePath);
+            if (result.getName() != null) {
+                mRecognizeViewModel.titleState.set(View.INVISIBLE);
+                mRecognizeViewModel.recognizeState.set(View.VISIBLE);
+                mRecognizeViewModel.nameContent.set(result.getName());
+                mRecognizeViewModel.msgContent.set("Welcome");
+                mRecognizeViewModel.pictureContent.set(recognizePath);
+            } else if (result.getMsg() != null) {
+                mRecognizeViewModel.titleState.set(View.INVISIBLE);
+                mRecognizeViewModel.recognizeState.set(View.VISIBLE);
+                mRecognizeViewModel.nameContent.set("");
+                mRecognizeViewModel.msgContent.set(result.getMsg());
+                mRecognizeViewModel.pictureContent.set(recognizePath);
             }
         });
     }
@@ -100,10 +125,9 @@ public class RecognizeFragment extends BaseFragment {
 
         public void openManage() {
             // 关闭相机
-            //CameraUtils.stopCamera(mRecognizeViewModel.cameraState.getValue());
             mRecognizeViewModel.cameraState.removeObservers(getViewLifecycleOwner());
             LogUtils.i(RecognizeFragment.class.getSimpleName() + " leave");
-            mFaceViewModel.getFaceRecognizeResultLiveData().removeObservers(getViewLifecycleOwner());
+            mFaceViewModel.getFeatureDetectResultLiveData().removeObservers(getViewLifecycleOwner());
             // 跳转
             boolean naviResult = NavigationUtils.navi2(nav(), R.id.recognizeFragment, R.id.action_recognize_to_manage);
             LogUtils.i(String.format("Navigate to %s %s", ManageFragment.class.getSimpleName(), naviResult ? "成功～" : "失败！"));

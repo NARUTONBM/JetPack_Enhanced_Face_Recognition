@@ -6,6 +6,7 @@ public class CompareResult {
     private float similar;
     private int trackId;
     private String mErrorMsg;
+    private String mToken;
 
     public CompareResult() {
     }
@@ -45,5 +46,13 @@ public class CompareResult {
 
     public void setErrorMsg(String errorMsg) {
         mErrorMsg = errorMsg;
+    }
+
+    public String getToken() {
+        return mToken;
+    }
+
+    public void setToken(String token) {
+        mToken = token;
     }
 }

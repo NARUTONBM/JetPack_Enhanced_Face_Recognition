@@ -27,6 +27,18 @@ public class RecognizeViewModel extends AndroidViewModel {
      */
     public final ObservableField<Integer> titleState = new ObservableField<>();
     /**
+     * 识别结果人名
+     */
+    public final ObservableField<String> nameContent = new ObservableField<>();
+    /**
+     * 识别结果提示信息
+     */
+    public final ObservableField<String> msgContent = new ObservableField<>();
+    /**
+     * 识别抓拍照路径
+     */
+    public final ObservableField<String> pictureContent = new ObservableField<>();
+    /**
      * 在检查完权限后再加载相机流
      */
     public final UnPeekLiveData<Camera> cameraState = new UnPeekLiveData<>();

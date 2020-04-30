@@ -62,7 +62,7 @@
 
         <ImageView
             android:id="@+id/iv_register"
-            setImage="@{vm.registerPicture}"
+            setImageBitmap="@{vm.registerPicture}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"

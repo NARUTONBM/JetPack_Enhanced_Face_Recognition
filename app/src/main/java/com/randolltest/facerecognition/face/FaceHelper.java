@@ -1,15 +1,18 @@
 package com.randolltest.facerecognition.face;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.arcsoft.face.FaceFeature;
 import com.arcsoft.face.FaceInfo;
+import com.blankj.utilcode.util.LogUtils;
 import com.randolltest.facerecognition.data.Constants;
 import com.randolltest.facerecognition.data.FacePreviewInfo;
-import com.randolltest.facerecognition.data.FaceRecognizeResult;
+import com.randolltest.facerecognition.data.FeatureDetectResult;
 import com.randolltest.facerecognition.ui.base.SharedViewModel;
+import com.randolltest.facerecognition.util.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -105,11 +108,11 @@ public class FaceHelper {
      * @param liveData
      */
     public void requestFaceFeature(byte[] nv21, FaceInfo faceInfo, int format, Integer trackId,
-                                   MutableLiveData<FaceRecognizeResult> liveData) {
+                                   MutableLiveData<FeatureDetectResult> liveData) {
         if (frEngine != null && frThreadQueue.remainingCapacity() > 0) {
             frExecutor.execute(new FaceRecognizeRunnable(nv21, faceInfo, format, trackId, liveData));
         } else {
-            FaceRecognizeResult result = new FaceRecognizeResult();
+            FeatureDetectResult result = new FeatureDetectResult();
             result.setResultCode(Constants.ERROR_BUSY);
             result.setTrackId(trackId);
             liveData.setValue(result);
@@ -153,8 +156,8 @@ public class FaceHelper {
      * @param liveData
      * @return 实时人脸处理结果，封装添加了一个trackId，trackId的获取依赖于faceId，用于记录人脸序号并保存
      */
-    public List<FacePreviewInfo> onPreviewFrame(byte[] nv21, MutableLiveData<FaceRecognizeResult> liveData) {
-        FaceRecognizeResult result = new FaceRecognizeResult();
+    public List<FacePreviewInfo> onPreviewFrame(byte[] nv21, MutableLiveData<FeatureDetectResult> liveData) {
+        FeatureDetectResult result = new FeatureDetectResult();
         if (ftEngine != null) {
             faceInfoList.clear();
             long ftStartTime = System.currentTimeMillis();
@@ -199,13 +202,13 @@ public class FaceHelper {
      * 人脸特征提取线程
      */
     public class FaceRecognizeRunnable implements Runnable {
-        private MutableLiveData<FaceRecognizeResult> mLiveData;
+        private MutableLiveData<FeatureDetectResult> mLiveData;
         private FaceInfo mFaceInfo;
         private int mFormat;
         private Integer mTrackId;
         private byte[] mNv21Data;
 
-        private FaceRecognizeRunnable(byte[] nv21Data, FaceInfo faceInfo, int format, Integer trackId, MutableLiveData<FaceRecognizeResult> liveData) {
+        private FaceRecognizeRunnable(byte[] nv21Data, FaceInfo faceInfo, int format, Integer trackId, MutableLiveData<FeatureDetectResult> liveData) {
             if (nv21Data == null) {
                 return;
             }
@@ -219,7 +222,7 @@ public class FaceHelper {
         @Override
         public void run() {
             if (mNv21Data != null) {
-                FaceRecognizeResult result = new FaceRecognizeResult();
+                FeatureDetectResult result = new FeatureDetectResult();
                 result.setTrackId(mTrackId);
                 if (frEngine != null) {
                     FaceFeature faceFeature = new FaceFeature();
@@ -230,8 +233,11 @@ public class FaceHelper {
                     }
                     result.setResultCode(frCode);
                     if (frCode == ErrorInfo.MOK) {
-//                        Log.i(TAG, "run: fr costTime = " + (System.currentTimeMillis() - frStartTime) + "ms");
                         result.setFaceFeature(faceFeature);
+                        Bitmap bitmap = ImageUtils.getCameraPreviewPicWithoutSave(mNv21Data, Constants.PICTURE_SAVE_ROTATION);
+                        boolean saveResult = ImageUtils.save(bitmap, Constants.PICTURE_PATH_PREFIX + Constants.RECOGNIZE_PICTURE_DEFAULT_NAME,
+                                Bitmap.CompressFormat.JPEG);
+                        LogUtils.d("识别图像保存结果：" + (saveResult ? "成功" : "失败"));
                     } else {
                         result.setFaceFeature(null);
                     }

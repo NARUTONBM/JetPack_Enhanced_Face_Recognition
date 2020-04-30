@@ -6,9 +6,6 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -27,6 +24,9 @@ import com.randolltest.facerecognition.util.FeatureUtils;
 import com.randolltest.facerecognition.util.NavigationUtils;
 
 import java.util.UUID;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class RegisterFragment extends BaseFragment {
 
@@ -65,15 +65,15 @@ public class RegisterFragment extends BaseFragment {
             }
         });
 
-        mFaceViewModel.getFaceRecognizeResultLiveData().observe(getViewLifecycleOwner(), result -> {
+        mFaceViewModel.getFeatureDetectResultLiveData().observe(getViewLifecycleOwner(), result -> {
             if (!mRegisterViewModel.registerClickable.get()) {
                 if (result.getTrackId() != null) {
                     // 检测到人脸
                     if (result.getFaceFeature() != null) {
                         // 提取特征值成功
                         String token = UUID.randomUUID().toString();
-                        String libPath = Constants.REGISTER_PICTURE_PATH_PREFIX + token + ".jpg";
-                        FileUtils.rename(Constants.REGISTER_PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME, libPath);
+                        String libPath = Constants.PICTURE_PATH_PREFIX + token + ".jpg";
+                        FileUtils.rename(Constants.PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME, libPath);
                         Person person = new Person(token, "test", FeatureUtils.encode(result.getFaceFeature().getFeatureData()), libPath);
                         mFaceViewModel.insertPerson(person);
                     } else {

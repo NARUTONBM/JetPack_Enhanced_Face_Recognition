@@ -15,6 +15,7 @@ public class Constants {
     public static final int CAMERA_PREVIEW_WIDTH = 800;
     public static final int CAMERA_PREVIEW_HEIGHT = 600;
     public static final int DISPLAY_ORIENTATION = 90;
+    public static final int PICTURE_SAVE_ROTATION = 270;
     public static final int JPEG_QUALITY = 100;
     /**
      * 线程池正在处理任务
@@ -33,14 +34,18 @@ public class Constants {
      */
     public static final float SIMILAR_THRESHOLD = 0.8F;
     /**
-     * 抓拍注册照片存储路径
+     * 抓拍照片存储路径
      */
-    public static final String REGISTER_PICTURE_PATH_PREFIX = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
-            "Android" + AppUtils.getAppPackageName() + "pictures/";
+    public static final String PICTURE_PATH_PREFIX = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
+            "Android" + File.separator + AppUtils.getAppPackageName() + "/pictures/";
     /**
      * 抓拍注册照片默认文件名
      */
     public static final String REGISTER_PICTURE_DEFAULT_NAME = "register.jpg";
+    /**
+     * 抓拍识别照片默认文件名
+     */
+    public static final String RECOGNIZE_PICTURE_DEFAULT_NAME = "recognize.jpg";
 
     public static class SP {
 

@@ -4,13 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.main.MainActivity">
 
-    <data>
-
-        <variable
-            name="vm"
-            type="com.randolltest.facerecognition.ui.main.MainViewModel" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dl_container"
         android:layout_width="match_parent"

@@ -2,12 +2,12 @@ package com.randolltest.facerecognition.data.persistence;
 
 import android.app.Application;
 
-import androidx.lifecycle.LiveData;
-
 import com.randolltest.facerecognition.data.persistence.person.Person;
 import com.randolltest.facerecognition.data.persistence.record.Record;
 
 import java.util.List;
+
+import androidx.lifecycle.LiveData;
 
 /**
  * @author narut.
@@ -47,5 +47,9 @@ public class FaceRepository {
         int offset = FaceDb.PER_PAGE_COUNT * (1 + page);
 
         return mFaceDao.getRecordByPage(offset, FaceDb.PER_PAGE_COUNT);
+    }
+
+    public LiveData<Integer> deleteAllPerson() {
+        return mFaceDao.deleteAllPerson();
     }
 }

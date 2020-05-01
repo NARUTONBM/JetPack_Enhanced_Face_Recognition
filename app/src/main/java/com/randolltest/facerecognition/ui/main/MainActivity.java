@@ -9,18 +9,16 @@ import com.randolltest.facerecognition.ui.base.DataBindingConfig;
 
 public class MainActivity extends BaseActivity {
 
-    private MainViewModel mMainViewModel;
     private FaceViewModel mFaceViewModel;
 
     @Override
     protected void initViewModel() {
-        mMainViewModel = getActivityViewModel(MainViewModel.class);
         mFaceViewModel = getActivityViewModel(FaceViewModel.class);
     }
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.activity_main, mMainViewModel);
+        return new DataBindingConfig(R.layout.activity_main, null);
     }
 
     @Override

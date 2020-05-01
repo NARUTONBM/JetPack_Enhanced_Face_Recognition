@@ -37,7 +37,7 @@ public class Constants {
      * 抓拍照片存储路径
      */
     public static final String PICTURE_PATH_PREFIX = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
-            "Android" + File.separator + AppUtils.getAppPackageName() + "/pictures/";
+            "Android" + File.separator + "data" + File.separator + AppUtils.getAppPackageName() + "/pictures/";
     /**
      * 抓拍注册照片默认文件名
      */

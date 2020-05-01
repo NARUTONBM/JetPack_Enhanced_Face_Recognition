@@ -298,6 +298,8 @@ public class FaceManager implements DefaultLifecycleObserver {
             return;
         }
 
+        LogUtils.d("Detect " + compareResult.getToken() + " with similarity " + compareResult.getSimilar());
+
         if (compareResult.getSimilar() > Constants.SIMILAR_THRESHOLD) {
             boolean isAdded = false;
             if (mCompareResultList == null) {
@@ -322,7 +324,6 @@ public class FaceManager implements DefaultLifecycleObserver {
             recognizeResult.setName(compareResult.getUserName());
         } else {
             mRequestFeatureStatusMap.put(trackId, RequestFeatureStatus.TO_RETRY);
-            recognizeResult.setMsg("NOT_REGISTERED");
         }
         liveData.setValue(recognizeResult);
     }

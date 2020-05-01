@@ -1,15 +1,15 @@
 package com.randolltest.facerecognition.data.persistence;
 
+import com.randolltest.facerecognition.data.persistence.person.Person;
+import com.randolltest.facerecognition.data.persistence.record.Record;
+
+import java.util.List;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-
-import com.randolltest.facerecognition.data.persistence.person.Person;
-import com.randolltest.facerecognition.data.persistence.record.Record;
-
-import java.util.List;
 
 /**
  * @author narut.
@@ -78,6 +78,7 @@ public interface FaceDao {
      *//*
     @Query("SELECT * from feature_table LIMIT 1")
     LiveData<List<Feature>> getAnyFeature();*/
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertPerson(Person person);
 
@@ -95,4 +96,10 @@ public interface FaceDao {
 
     @Query("SELECT * FROM record_table ORDER BY id ASC LIMIT :offset, :rows")
     LiveData<List<Record>> getRecordByPage(int offset, int rows);
+
+    /**
+     * 删除所有数据
+     */
+    @Query("DELETE FROM person_table")
+    LiveData<Integer> deleteAllPerson();
 }

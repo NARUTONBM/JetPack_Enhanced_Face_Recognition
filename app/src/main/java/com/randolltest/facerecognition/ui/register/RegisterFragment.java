@@ -72,9 +72,13 @@ public class RegisterFragment extends BaseFragment {
                     if (result.getFaceFeature() != null) {
                         // 提取特征值成功
                         String token = UUID.randomUUID().toString();
-                        String libPath = Constants.PICTURE_PATH_PREFIX + token + ".jpg";
-                        FileUtils.rename(Constants.PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME, libPath);
-                        Person person = new Person(token, "test", FeatureUtils.encode(result.getFaceFeature().getFeatureData()), libPath);
+                        String newName = token + ".jpg";
+                        boolean renameResult = FileUtils.rename(Constants.PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME,
+                                newName);
+                        LogUtils.d("重命名抓拍图像结果：" + (renameResult ? "成功" : "失败"));
+
+                        Person person = new Person(token, "test", FeatureUtils.encode(result.getFaceFeature().getFeatureData()),
+                                Constants.PICTURE_PATH_PREFIX + newName);
                         mFaceViewModel.insertPerson(person);
                     } else {
                         // 提取特征值失败，再次重试/最终失败

@@ -69,6 +69,8 @@ public class RecognizeFragment extends BaseFragment {
                 long nowMills = TimeUtils.getNowMills();
                 if (nowMills - sLastNoFaceMills > 300) {
                     // 连续 300 毫秒无人脸，切换标题
+                    mRecognizeViewModel.recognizeState.set(View.INVISIBLE);
+                    mRecognizeViewModel.titleState.set(View.VISIBLE);
                     mRecognizeViewModel.titleContent.set(getString(R.string.value_screen_title));
                     sLastNoFaceMills = nowMills;
                 }
@@ -94,24 +96,35 @@ public class RecognizeFragment extends BaseFragment {
                         mFaceViewModel.judgeQuality(compareResult);
                     }
                 });
+            } else {
+                // 脸库为空
+                mRecognizeViewModel.titleState.set(View.VISIBLE);
+                mRecognizeViewModel.recognizeState.set(View.INVISIBLE);
+                mRecognizeViewModel.titleContent.set(compareResult.getErrorMsg());
             }
         });
 
         mFaceViewModel.getRecognizeResultLiveData().observe(getViewLifecycleOwner(), result -> {
-            String recognizePath = Constants.PICTURE_PATH_PREFIX + TimeUtils.getNowString() + ".jpg";
-            FileUtils.rename(Constants.PICTURE_PATH_PREFIX + Constants.RECOGNIZE_PICTURE_DEFAULT_NAME, recognizePath);
+            String newName = TimeUtils.getNowString() + ".jpg";
+            boolean renameResult = FileUtils.rename(Constants.PICTURE_PATH_PREFIX + Constants.RECOGNIZE_PICTURE_DEFAULT_NAME, newName);
+            LogUtils.d("重命名抓拍图像结果：" + (renameResult ? "成功" : "失败"));
+
             if (result.getName() != null) {
                 mRecognizeViewModel.titleState.set(View.INVISIBLE);
                 mRecognizeViewModel.recognizeState.set(View.VISIBLE);
                 mRecognizeViewModel.nameContent.set(result.getName());
                 mRecognizeViewModel.msgContent.set("Welcome");
-                mRecognizeViewModel.pictureContent.set(recognizePath);
+                mRecognizeViewModel.pictureContent.set(Constants.PICTURE_PATH_PREFIX + newName);
             } else if (result.getMsg() != null) {
                 mRecognizeViewModel.titleState.set(View.INVISIBLE);
                 mRecognizeViewModel.recognizeState.set(View.VISIBLE);
                 mRecognizeViewModel.nameContent.set("");
                 mRecognizeViewModel.msgContent.set(result.getMsg());
-                mRecognizeViewModel.pictureContent.set(recognizePath);
+                mRecognizeViewModel.pictureContent.set(Constants.PICTURE_PATH_PREFIX + newName);
+            } else {
+                mRecognizeViewModel.recognizeState.set(View.INVISIBLE);
+                mRecognizeViewModel.titleState.set(View.VISIBLE);
+                mRecognizeViewModel.titleContent.set(getString(R.string.value_screen_title));
             }
         });
     }
@@ -127,7 +140,10 @@ public class RecognizeFragment extends BaseFragment {
             // 关闭相机
             mRecognizeViewModel.cameraState.removeObservers(getViewLifecycleOwner());
             LogUtils.i(RecognizeFragment.class.getSimpleName() + " leave");
+            // 取消订阅
+            mFaceViewModel.getCompareResultLiveData().removeObservers(getViewLifecycleOwner());
             mFaceViewModel.getFeatureDetectResultLiveData().removeObservers(getViewLifecycleOwner());
+            mFaceViewModel.getRecognizeResultLiveData().removeObservers(getViewLifecycleOwner());
             // 跳转
             boolean naviResult = NavigationUtils.navi2(nav(), R.id.recognizeFragment, R.id.action_recognize_to_manage);
             LogUtils.i(String.format("Navigate to %s %s", ManageFragment.class.getSimpleName(), naviResult ? "成功～" : "失败！"));

@@ -31,11 +31,9 @@ public class HomeFragment extends BaseFragment {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
     };
-    private HomeViewModel mHomeViewModel;
 
     @Override
     protected void initViewModel() {
-        mHomeViewModel = getFragmentViewModel(HomeViewModel.class);
     }
 
     @Override

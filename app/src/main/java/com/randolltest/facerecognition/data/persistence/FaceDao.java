@@ -101,5 +101,5 @@ public interface FaceDao {
      * 删除所有数据
      */
     @Query("DELETE FROM person_table")
-    LiveData<Integer> deleteAllPerson();
+    int deleteAllPerson();
 }

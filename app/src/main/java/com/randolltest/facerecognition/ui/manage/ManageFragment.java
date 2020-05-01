@@ -45,10 +45,10 @@ public class ManageFragment extends BaseFragment {
         }
 
         public void clear() {
-            mFaceViewModel.getFaceRepository().deleteAllPerson().observe(getViewLifecycleOwner(), integer -> {
-                LogUtils.d("清空了脸库中的" + integer + "条数据");
-                ToastUtils.showShort("清空脸库完成");
-            });
+            int deleteNum = mFaceViewModel.getFaceRepository().deleteAllPerson();
+            LogUtils.d("清空了脸库中的" + deleteNum + "条数据");
+            ToastUtils.showShort("清空脸库完成");
+
         }
     }
 }

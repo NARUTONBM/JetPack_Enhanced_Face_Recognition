@@ -49,7 +49,7 @@ public class FaceRepository {
         return mFaceDao.getRecordByPage(offset, FaceDb.PER_PAGE_COUNT);
     }
 
-    public LiveData<Integer> deleteAllPerson() {
+    public int deleteAllPerson() {
         return mFaceDao.deleteAllPerson();
     }
 }

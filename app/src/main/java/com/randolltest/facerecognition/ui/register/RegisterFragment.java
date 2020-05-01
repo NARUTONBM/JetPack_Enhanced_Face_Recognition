@@ -2,9 +2,13 @@ package com.randolltest.facerecognition.ui.register;
 
 import android.Manifest;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -14,6 +18,7 @@ import com.ftd.livepermissions.PermissionResult;
 import com.randolltest.facerecognition.BR;
 import com.randolltest.facerecognition.R;
 import com.randolltest.facerecognition.data.Constants;
+import com.randolltest.facerecognition.data.FeatureDetectResult;
 import com.randolltest.facerecognition.data.persistence.person.Person;
 import com.randolltest.facerecognition.ui.base.BaseFragment;
 import com.randolltest.facerecognition.ui.base.DataBindingConfig;
@@ -27,11 +32,15 @@ import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 
 public class RegisterFragment extends BaseFragment {
 
     private RegisterViewModel mRegisterViewModel;
     private FaceViewModel mFaceViewModel;
+    private AlertDialog mAlertDialog;
 
     @Override
     protected void initViewModel() {
@@ -70,16 +79,8 @@ public class RegisterFragment extends BaseFragment {
                 if (result.getTrackId() != null) {
                     // 检测到人脸
                     if (result.getFaceFeature() != null) {
-                        // 提取特征值成功
-                        String token = UUID.randomUUID().toString();
-                        String newName = token + ".jpg";
-                        boolean renameResult = FileUtils.rename(Constants.PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME,
-                                newName);
-                        LogUtils.d("重命名抓拍图像结果：" + (renameResult ? "成功" : "失败"));
-
-                        Person person = new Person(token, "test", FeatureUtils.encode(result.getFaceFeature().getFeatureData()),
-                                Constants.PICTURE_PATH_PREFIX + newName);
-                        mFaceViewModel.insertPerson(person);
+                        // 提取特征值成功，弹出姓名输入框
+                        showDialog();
                     } else {
                         // 提取特征值失败，再次重试/最终失败
                         ToastUtils.showShort("提取特征值失败，请重试");
@@ -94,9 +95,39 @@ public class RegisterFragment extends BaseFragment {
         });
     }
 
+    private void showDialog() {
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            if (Settings.canDrawOverlays(requireContext())) {
+
+                ViewDataBinding dialogBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.dialog_register, null, false);
+                dialogBinding.setLifecycleOwner(this);
+                dialogBinding.setVariable(BR.dialogVm, mRegisterViewModel);
+                dialogBinding.setVariable(BR.dialogClick, new ClickProxy());
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setView(dialogBinding.getRoot());
+                mAlertDialog = builder.create();
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+                    mAlertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+                } else {
+                    mAlertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
+                }
+                mAlertDialog.show();
+                mAlertDialog.setCanceledOnTouchOutside(false);
+            } else {
+
+            }
+        }
+    }
+
     public class ClickProxy {
 
         public void pop() {
+
+            mFaceViewModel.getRegisterBitmapLiveData().removeObservers(getViewLifecycleOwner());
+            mFaceViewModel.getFeatureDetectResultLiveData().removeObservers(getViewLifecycleOwner());
 
             boolean popResult = NavigationUtils.pop2(nav(), R.id.manageFragment, R.id.registerFragment, false, R.id.action_register_to_manage);
             LogUtils.i(String.format("Pop to %s %s", ManageFragment.class.getSimpleName(), popResult ? "成功～" : "失败！"));
@@ -105,6 +136,40 @@ public class RegisterFragment extends BaseFragment {
         public void takePicture() {
             mRegisterViewModel.registerClickable.set(false);
             mFaceViewModel.getTakePicture().setValue(-1);
+        }
+
+        public void dialogCancel() {
+            FileUtils.delete(Constants.PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME);
+            // pop
+            if (mAlertDialog != null && mAlertDialog.isShowing()) {
+                mAlertDialog.dismiss();
+                mAlertDialog = null;
+                pop();
+            }
+        }
+
+        public void dialogConfirm() {
+            String name = mRegisterViewModel.nameContent.get();
+            if (!name.isEmpty()) {
+                // 姓名不为 ""
+                FeatureDetectResult result = mFaceViewModel.getFeatureDetectResultLiveData().getValue();
+                String token = UUID.randomUUID().toString();
+                String newName = token + ".jpg";
+                boolean renameResult = FileUtils.rename(Constants.PICTURE_PATH_PREFIX + Constants.REGISTER_PICTURE_DEFAULT_NAME,
+                        newName);
+                LogUtils.d("重命名注册图像结果：" + (renameResult ? "成功" : "失败"));
+
+                Person person = new Person(token, "test", FeatureUtils.encode(result.getFaceFeature().getFeatureData()),
+                        Constants.PICTURE_PATH_PREFIX + newName);
+                mFaceViewModel.insertPerson(person);
+
+                // pop
+                if (mAlertDialog != null && mAlertDialog.isShowing()) {
+                    mAlertDialog.dismiss();
+                    mAlertDialog = null;
+                    pop();
+                }
+            }
         }
     }
 

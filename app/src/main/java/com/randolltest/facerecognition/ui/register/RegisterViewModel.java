@@ -27,8 +27,11 @@ public class RegisterViewModel extends ViewModel {
 
     public ObservableField<Boolean> registerClickable = new ObservableField<>();
 
+    public ObservableField<String> nameContent = new ObservableField<>();
+
     {
         pictureState.set(View.INVISIBLE);
         registerClickable.set(true);
+        nameContent.set("");
     }
 }

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="dialogClick"
+            type="com.randolltest.facerecognition.ui.register.RegisterFragment.ClickProxy" />
+
+        <variable
+            name="dialogVm"
+            type="com.randolltest.facerecognition.ui.register.RegisterViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            style="@style/TextAppearance.MaterialComponents.Headline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/value_tv_dialog_title"
+            app:layout_constraintBottom_toTopOf="@id/et_dialog_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintBottom_toTopOf="@id/et_dialog_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_dialog_title" />
+
+        <EditText
+            android:id="@+id/et_dialog_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:background="@null"
+            android:ems="10"
+            android:hint="@string/value_et_dialog_name"
+            android:inputType="textPersonName"
+            android:maxLength="5"
+            android:text="@={dialogVm.nameContent}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            app:layout_constraintBottom_toTopOf="@id/btn_dialog_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_dialog_title" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintBottom_toTopOf="@id/btn_dialog_cancel"
+            app:layout_constraintTop_toBottomOf="@id/et_dialog_name"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <Button
+            android:id="@+id/btn_dialog_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="32dp"
+            android:background="@null"
+            android:onClick="@{()->dialogClick.dialogCancel()}"
+            android:text="@string/value_btn_dialog_cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_dialog_confirm"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_dialog_name" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/btn_dialog_confirm"
+            app:layout_constraintStart_toStartOf="@id/btn_dialog_cancel"
+            app:layout_constraintTop_toBottomOf="@id/et_dialog_name" />
+
+        <Button
+            android:id="@+id/btn_dialog_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:onClick="@{()->dialogClick.dialogConfirm()}"
+            android:text="@string/value_btn_dialog_confirm"
+            app:layout_constraintBottom_toBottomOf="@id/btn_dialog_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/btn_dialog_cancel"
+            app:layout_constraintTop_toTopOf="@id/btn_dialog_cancel" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

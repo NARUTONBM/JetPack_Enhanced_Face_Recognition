@@ -16,6 +16,12 @@ recognition process with you through this project, and I hope you can
 offer me some advices in the Issue. Another key point is the Jetpack,
 I'm of it and I believe it's the best way to build a modern App so far.
 
+## How to run
+Register a developer account to get your AppID & SdkKey and input them
+into
+[gradle.properties](https://github.com/NARUTONBM/JetPack_Enhanced_Face_Recognition/blob/master/gradle.properties)
+file, then just hit it!
+
 ## Thanks to
 @[Androidx](https://developer.android.google.cn/jetpack/androidx)
 

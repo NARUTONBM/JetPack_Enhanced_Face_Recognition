@@ -59,4 +59,5 @@ ext {
     slidinguppanelVersion = "3.4.0"
     materialVersion = "1.2.0-alpha06"
     permissionVersion = "1.0.0"
+    leakCanaryDebugVersion = "2.2"
 }

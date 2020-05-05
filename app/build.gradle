@@ -25,6 +25,29 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file('randolltest')
+            storePassword 'randolltest'
+            keyAlias 'randoll'
+            keyPassword 'randolltest'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -66,7 +89,7 @@ dependencies {
 
     implementation "com.ftd.livepermissions:livepermissions:$rootProject.permissionVersion"
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$rootProject.leakCanaryDebugVersion"
 
     implementation files('libs/arcsoft_face.jar')
     implementation files('libs/arcsoft_image_util.jar')

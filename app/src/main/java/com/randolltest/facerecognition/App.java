@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
-import leakcanary.LeakCanary;
 
 /**
  * @author narut.
@@ -30,12 +29,6 @@ public class App extends Application implements ViewModelStoreOwner {
         mViewModelStore = new ViewModelStore();
         FeatureMap.init();
         Utils.init(this);
-
-        LeakCanary.Config config = LeakCanary.getConfig().newBuilder()
-                .retainedVisibleThreshold(3)
-                .computeRetainedHeapSize(false)
-                .build();
-        LeakCanary.setConfig(config);
     }
 
     @NonNull

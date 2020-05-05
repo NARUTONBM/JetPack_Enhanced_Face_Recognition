@@ -10,7 +10,7 @@ to implement their build-in face lib.
 I chose the ArcSoft FaceEngine SDK for this project because of they APIs
 and document are better in my opinion.
 
-## So?
+## Why would I start this
 As I said, this is a demo project. I share my understanding of the face
 recognition process with you through this project, and I hope you can
 offer me some advices in the Issue. Another key point is the Jetpack,
